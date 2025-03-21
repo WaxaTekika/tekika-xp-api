@@ -8,12 +8,12 @@ app = Flask(__name__)
 API_URL = "https://www.tekika.io/api/nft/nft-xp?pwd=VZSnM2as9wKwqeE"
 
 # Date Ranges for Months
-MONTH_1_START = datetime.date(2025, 1, 10)
-MONTH_1_END = datetime.date(2025, 2, 10)
-MONTH_2_START = datetime.date(2025, 2, 11)
-MONTH_2_END = datetime.date(2025, 3, 10)
-MONTH_3_START = datetime.date(2025, 3, 11)
-MONTH_3_END = datetime.date(2025, 4, 10)
+MONTH_1_START = datetime.date(2025, 1, 24)
+MONTH_1_END = datetime.date(2025, 2, 23)
+MONTH_2_START = datetime.date(2025, 2, 24)
+MONTH_2_END = datetime.date(2025, 3, 23)
+MONTH_3_START = datetime.date(2025, 3, 24)
+MONTH_3_END = datetime.date(2025, 4, 24)
 
 def fetch_data():
     """Fetch total Tekika XP and mints from the API."""
