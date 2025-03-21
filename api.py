@@ -15,6 +15,10 @@ MONTH_2_END = datetime.date(2025, 3, 23)
 MONTH_3_START = datetime.date(2025, 3, 24)
 MONTH_3_END = datetime.date(2025, 4, 24)
 
+# Stored total mints at the end of each month
+MONTH_1_USERS = 10000  # Adjust with actual numbers
+MONTH_2_USERS = 15000  # Adjust with actual numbers
+
 def fetch_data():
     """Fetch total Tekika XP and mints from the API."""
     try:
@@ -43,7 +47,7 @@ def determine_month():
         return None  # Outside valid date range
 
 def calculate_reward(user_xp, total_season2_tekika, total_xp, month):
-    """Calculate the reward based on the detected month."""
+    """Calculate the reward based on newly added mints per month."""
     if total_season2_tekika is None or total_xp is None or user_xp <= 0:
         return None
 
@@ -56,19 +60,23 @@ def calculate_reward(user_xp, total_season2_tekika, total_xp, month):
     else:
         pool += (10000 * 8) + (10000 * 6) + ((total_season2_tekika - 20000) * 5)
 
-    # Carry-over logic for each month
+    # Calculate new mints added per month
     if month == 1:
         pool /= 3  # Month 1 pool is divided by 3
         month_1_share = pool  # One-third is carried to Month 2 & 3
 
     elif month == 2:
-        month_1_share = (pool / 3)  # One-third from Month 1 carried over
-        pool = (pool / 2) + month_1_share  # Month 2 pool is divided by 2, adding Month 1 carry-over
+        new_users_month_2 = max(total_season2_tekika - MONTH_1_USERS, 0)  # Only count new mints
+        pool = (new_users_month_2 * 8) / 2  # Month 2 pool is divided by 2
+        month_1_share = (MONTH_1_USERS * 8) / 3  # One-third from Month 1 carried over
+        pool += month_1_share  # Add Month 1 carry-over
 
     elif month == 3:
-        month_1_share = (pool / 3)  # One-third from Month 1 carried over
-        month_2_share = (pool / 2)  # Half from Month 2 carried over
-        pool = month_1_share + month_2_share  # Month 3 gets both carry-overs
+        new_users_month_3 = max(total_season2_tekika - MONTH_2_USERS, 0)  # Only count new mints
+        pool = (new_users_month_3 * 8)  # Month 3 gets new users' contribution
+        month_1_share = (MONTH_1_USERS * 8) / 3  # One-third from Month 1 carried over
+        month_2_share = ((MONTH_2_USERS - MONTH_1_USERS) * 8) / 2  # Half from Month 2 carried over
+        pool += month_1_share + month_2_share  # Month 3 gets both carry-overs
 
     else:
         return None  # Invalid month selection
